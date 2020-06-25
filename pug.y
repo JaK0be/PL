@@ -5,32 +5,34 @@ extern int yylex();
 int yyerror(char *s);
 %}
 
-%union{
-}
-
-%token ERRO HTML TAGP TAG BLOCK SCTAG
+%token ERRO tag sctag nest scnest
 
 %%
 
-Pug : HTML Tags
+Pug : Tags
     ; 
 
 Tags : Tags TagP
-     | TagP
      |
      ;
 
-TagP : TAGP TagS
+TagP : tag Nests
+     | SelfClosingTag
+     | BlockExpansion Nests
      ;
 
-TagSec : TAG 
-       | TagSec TAG
-       | SelfClosingTag
-       | BLOCK ':' TagSec
-       ;
+Nests : Nests nest
+      |
+      ;
 
-SelfClosingTag : SCTAG
-               | TAG '/'
+BlockExpansion : tag ':' tag
+               | tag ':' SelfClosingTag
+               | tag ':' BlockExpansion
+               ;
+
+SelfClosingTag : sctag
+               | tag '/'
+               | sctag '/'
                ;
 
 %%
