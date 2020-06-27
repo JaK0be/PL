@@ -5,65 +5,136 @@ extern int yylex();
 int yyerror(char *s);
 %}
 
-%token ERRO tag sctag nest scnest snest atrib
+%union{
+    char* svalue;
+}
+
+%token ERRO tag sctag nest scnest atributo conteudo
+%type <svalue> tag sctag nest scnest atributo conteudo
+%type <svalue> Tags TagP Nests Group BlockExpansion SelfClosingTag SelfClosingNest
+%type <svalue> Tag TagC SCTag Nest NestC SCNest
 
 %%
 
-Pug : Tags
+Pug : Tags {
+                printf("%s\n",$1);
+            }
     ; 
 
-Tags : Tags TagP
-     |
+Tags : Tags TagP {
+                    asprintf(&$$, "%s \n %s", $1, $2);
+                 }
+     | {
+           asprintf(&$$, "\n");
+       }
      ;
 
 TagP : Tag Nests
-     | SelfClosingTag
+     | SelfClosingTag {
+                          asprintf(&$$, "%s", $1);
+                      }
      | BlockExpansion Nests
      ;
 
-Nests : Nests Nest
-      | 
+Nests : Nests Group
+      | {
+           asprintf(&$$, "\n");
+        }
+      ; 
+
+Group : SelfClosingNest {
+                            asprintf(&$$, "%s", $1);
+                        }
+      | Nest {
+                asprintf(&$$, "%s", $1);
+             }
+      | NestC ':' Tag
+      | NestC ':' BlockExpansion
       ;
 
-Nest : SelfClosingNest
-     | Nestt SNest
-     | Nestt ':' Tag
-     ;
-
-SNest : SNest snest
-      |
-      ;
-
-BlockExpansion : Tag ':' Tag
-               | Tag ':' SelfClosingTag
-               | Tag ':' BlockExpansion
+BlockExpansion : TagC ':' Tag
+               | TagC ':' SelfClosingTag
+               | TagC ':' BlockExpansion
                ;
 
-SelfClosingTag : SCTag
-               | Tag '/'
-               | SCTag '/'
+SelfClosingTag : SCTag {
+                           asprintf(&$$, "%s", $1);
+                       }
+               | TagC '/'
+               | SCTag '/' {
+                                asprintf(&$$, "%s", $1);
+                           }
                ;
 
-SelfClosingNest : SCNest
-                | Nestt '/'
-                | SCNest '/'
+SelfClosingNest : SCNest {
+                             asprintf(&$$, "%s", $1);
+                         }
+                | NestC '/'
+                | SCNest '/' {
+                                 asprintf(&$$, "%s", $1);
+                             }
                 ;
 
-Tag : tag
-    | tag '(' atrib ')'
+Tag : tag {
+              asprintf(&$$, "<%s> </%s>", $1, $1);
+          }
+    | tag conteudo {
+                       asprintf(&$$, "<%s> %s </%s>", $1, $2, $1); 
+                   }
+    | tag '(' atributo ')' {
+                                asprintf(&$$, "<%s %s> </%s> \n", $1, $3, $1);
+                           }
+    | tag '(' atributo ')' conteudo {
+                                        asprintf(&$$, "<%s %s> %s </%s> \n", $1, $3, $5, $1);
+                                    }
     ;
 
-SCTag : sctag
-      | sctag '(' atrib ')'
+TagC : tag {
+                asprintf(&$$, "<%s> </%s>", $1, $1);
+           }
+     | tag '(' atributo ')' {
+                                asprintf(&$$, "<%s %s> </%s> \n", $1, $3, $1);
+                            }
+     ;
+
+SCTag : sctag {
+                  asprintf(&$$, "<%s />", $1); 
+              }
+      | sctag '(' atributo ')' {
+                                    asprintf(&$$, "<%s %s />", $1, $3);
+                               }
       ;
 
-Nestt : nest
-      | nest '(' atrib ')'
+Nest : nest {
+                asprintf(&$$, "<%s> </%s>", $1, $1); 
+            }
+     | nest conteudo {
+                         asprintf(&$$, "<%s> %s </%s>", $1, $2, $1);
+                     } 
+     | nest '(' atributo ')' {
+                                 asprintf(&$$, "<%s %s> </%s> \n", $1, $3, $1);
+                             }
+     | nest '(' atributo ')' conteudo {
+                                          asprintf(&$$, "<%s %s> %s </%s> \n", $1, $3, $5, $1);
+                                      }
+     ;
+
+NestC : nest {
+                  asprintf(&$$, "<%s> </%s>", $1, $1); 
+             }
+      | nest '(' atributo ')' {
+                                  asprintf(&$$, "<%s %s> </%s> \n", $1, $3, $1); 
+                              }
       ;
 
-SCNest : scnest
-       | scnest '(' atrib ')'
+SCNest : scnest {
+                    asprintf(&$$, "<%s />", $1);
+                }
+       | scnest '(' atributo ')' {
+                                     asprintf(&$$, "<%s %s />", $1, $3);
+                                 }
        ;
+
 %%
 
 int main(){

@@ -12,6 +12,7 @@ Tag             ({TagList1}|{TagList2}|{TagList3}|{TagList4}|{TagList5})
 SCTagList       "area"|"base"|"br"|"col"|"embed"|"hr"|"img"|"input"|"link"|"meta"|"param"|"source"|"track"|"wbr"
 
 %x atrib
+%option yylineno
 
 %%
 [\n\r] ;
