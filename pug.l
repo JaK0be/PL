@@ -37,11 +37,11 @@ SCTagList       "area"|"base"|"br"|"col"|"embed"|"hr"|"img"|"input"|"link"|"meta
                yylval.svalue = strdup(yytext);
                return sctag;
             }
-(\ \ ){Tag} {
+(\ \ )+{Tag} {
                yylval.svalue = strdup(yytext+2);
                return nest;
             }
-(\ \ ){SCTagList} {
+(\ \ )+{SCTagList} {
                      yylval.svalue = strdup(yytext+2);
                      return scnest;
                   }
