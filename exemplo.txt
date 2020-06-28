@@ -1,0 +1,19 @@
+head
+  title About Me
+body
+  nav:a(href="./site.html") Sitio
+  a(href="./site.html") Outro Sitio
+
+  h1 Texto
+  h3 Nome
+  img(src="imagem.jpeg")
+ul(class="x"):li(class="y") YYYYY
+table
+  thead:tr:th Elemento
+  thead:th:tr Outro Elemento
+
+video(source="fonte") Temos aqui um video
+a:br
+p:h3 Titulo no final
+img
+  p Isto vai dar erro

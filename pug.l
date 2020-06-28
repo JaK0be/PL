@@ -2,7 +2,7 @@
 #include "y.tab.h"
 %}
 
-TagList1        a|"abbr"|"address"|"article"|"aside"|"audio"|"b"|"bdi"|"bdo"|"blockquote"|"body"|"button"|"canvas"|"caption"|"cite"|"code"
+TagList1        "a"|"abbr"|"address"|"article"|"aside"|"audio"|"b"|"bdi"|"bdo"|"blockquote"|"body"|"button"|"canvas"|"caption"|"cite"|"code"
 TagList2        "dd"|"del"|"details"|"dfn"|"dialog"|"div"|"dl"|"dt"|"em"|"fieldset"|"figcaption"|"figure"|"footer"|"form"|"h1"|"h2"|"h3"|"h4"|"h5"|"h6"
 TagList3        "head"|"header"|"html"|"i"|"iframe"|"ins"|"kbd"|"label"|"legend"|"li"|"main"|"map"|"mark"|"meter"|"nav"|"noscript"|"object"|"ol"|"optgroup"|"option"|"output"
 TagList4        "p"|"pre"|"progress"|"q"|"rp"|"rt"|"ruby"|"s"|"samp"|"script"|"select"|"small"|"span"|"strong"|"style"|"sub"|"summary"|"sup"|"svg"

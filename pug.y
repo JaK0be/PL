@@ -20,7 +20,7 @@ int yyerror(char *s);
 %%
 
 Pug : Tags {
-                printf("%s\n",$1);
+                printf("<!DOCTYPE html>\n<html>\n%s\n</html>",$1);
            }
     ; 
 
@@ -33,16 +33,16 @@ Tags : Tags TagP {
      ;
 
 TagP : tag Nests {
-                    asprintf(&$$, "<%s> \n\t%s\n </%s>", $1, $2, $1);
+                    asprintf(&$$, "<%s>\n\t%s\n</%s>", $1, $2, $1);
                  }
      | tag conteudo Nests {
-                                asprintf(&$$, "<%s> %s\n\t%s\n </%s>", $1, $2, $3, $1); 
+                                asprintf(&$$, "<%s>%s\n\t%s\n</%s>", $1, $2, $3, $1); 
                           }
      | tag '(' atributo ')' Nests {
-                                        asprintf(&$$, "<%s %s> \n\t%s\n </%s> \n", $1, $3, $5, $1);
+                                        asprintf(&$$, "<%s %s>\n\t%s\n</%s>", $1, $3, $5, $1);
                                   }
      | tag '(' atributo ')' conteudo Nests {
-                                                asprintf(&$$, "<%s %s> %s\n\t%s\n </%s> \n", $1, $3, $5, $6, $1);
+                                                asprintf(&$$, "<%s %s> %s\n\t%s\n</%s>", $1, $3, $5, $6, $1);
                                            }
      | SelfClosingTag {
                           asprintf(&$$, "%s", $1);
@@ -67,36 +67,36 @@ Group : SelfClosingNest {
                 asprintf(&$$, "%s", $1);
              }
       | nest ':' Tag {
-                        asprintf(&$$, "<%s> \n\t%s\n </%s>", $1, $3, $1);
+                        asprintf(&$$, "<%s>\n\t%s\n</%s>", $1, $3, $1);
                      }
       | nest '(' atributo ')' ':' Tag {
-                                         asprintf(&$$, "<%s %s> \n\t%s\n </%s> \n", $1, $3, $6, $1);
+                                         asprintf(&$$, "<%s %s>\n\t%s\n</%s>", $1, $3, $6, $1);
                                       }
       | nest ':' BlockExpansion {
-                                    asprintf(&$$, "<%s> \n\t%s\n </%s>", $1, $3, $1);
+                                    asprintf(&$$, "<%s>\n\t%s\n</%s>", $1, $3, $1);
                                 }
       | nest '(' atributo ')' ':' BlockExpansion {
-                                                    asprintf(&$$, "<%s %s> \n\t%s\n </%s> \n", $1, $3, $6, $1);
+                                                    asprintf(&$$, "<%s %s>\n\t%s\n</%s>", $1, $3, $6, $1);
                                                  }
       ;
 
 BlockExpansion : tag ':' Tag {
-                                 asprintf(&$$, "<%s> \n\t%s\n </%s>", $1, $3, $1);
+                                 asprintf(&$$, "<%s>\n\t%s\n</%s>", $1, $3, $1);
                              }
                | tag '(' atributo ')' ':' Tag {
-                                                    asprintf(&$$, "<%s %s> \n\t%s\n </%s> \n", $1, $3, $6, $1);
+                                                    asprintf(&$$, "<%s %s>\n\t%s\n</%s>", $1, $3, $6, $1);
                                               }
                | tag ':' SelfClosingTag {
-                                            asprintf(&$$, "<%s> \n\t%s\n </%s>", $1, $3, $1);
+                                            asprintf(&$$, "<%s>\n\t%s\n</%s>", $1, $3, $1);
                                         }
                | tag '(' atributo ')' ':' SelfClosingTag {
-                                                             asprintf(&$$, "<%s %s> \n\t%s\n </%s> \n", $1, $3, $6, $1);
+                                                             asprintf(&$$, "<%s %s>\n\t%s\n</%s>", $1, $3, $6, $1);
                                                          }
                | tag ':' BlockExpansion {
-                                            asprintf(&$$, "<%s> \n\t%s\n </%s>", $1, $3, $1);
+                                            asprintf(&$$, "<%s>\n\t%s\n</%s>", $1, $3, $1);
                                         }
                | tag '(' atributo ')' ':' BlockExpansion {
-                                                             asprintf(&$$, "<%s %s> \n\t%s\n </%s> \n", $1, $3, $6, $1);
+                                                             asprintf(&$$, "<%s %s>\n\t%s\n</%s>", $1, $3, $6, $1);
                                                          }
                ;
 
@@ -135,10 +135,10 @@ Tag : tag {
                        asprintf(&$$, "<%s> %s </%s>", $1, $2, $1); 
                    }
     | tag '(' atributo ')' {
-                                asprintf(&$$, "<%s %s> </%s> \n", $1, $3, $1);
+                                asprintf(&$$, "<%s %s> </%s>", $1, $3, $1);
                            }
     | tag '(' atributo ')' conteudo {
-                                        asprintf(&$$, "<%s %s> %s </%s> \n", $1, $3, $5, $1);
+                                        asprintf(&$$, "<%s %s> %s </%s>", $1, $3, $5, $1);
                                     }
     ;
 
@@ -157,10 +157,10 @@ Nest : nest {
                          asprintf(&$$, "<%s> %s </%s>", $1, $2, $1);
                      } 
      | nest '(' atributo ')' {
-                                 asprintf(&$$, "<%s %s> </%s> \n", $1, $3, $1);
+                                 asprintf(&$$, "<%s %s> </%s>", $1, $3, $1);
                              }
      | nest '(' atributo ')' conteudo {
-                                          asprintf(&$$, "<%s %s> %s </%s> \n", $1, $3, $5, $1);
+                                          asprintf(&$$, "<%s %s> %s </%s>", $1, $3, $5, $1);
                                       }
      ;
 
@@ -180,6 +180,6 @@ int main(){
 }
 
 int yyerror(char *s){
-    printf("Erro na linha %d \n", yylineno);
+    printf("\nErro na linha %d \n", yylineno);
     return 0;
 }
